@@ -1,0 +1,65 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MeasureActivity"
+    android:clipChildren="false">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cameraPreview"
+        android:layout_gravity="center"
+        android:clipChildren="true" />
+
+    <info.kmichel.colordroid.VisorView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ToggleButton
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/lightButton"
+            android:contentDescription="@string/toggle_light_button_label"
+            android:background="@drawable/light_toggle"
+            android:textSize="0sp" />
+
+        <ToggleButton
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/speechButton"
+            android:contentDescription="@string/toggle_speech_button_label"
+            android:background="@drawable/speech_toggle"
+            android:textSize="0sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/colorName"
+            android:singleLine="true"
+            android:importantForAccessibility="yes"
+            android:text="@string/ellipsis"
+            android:textSize="36sp"
+            android:gravity="center_horizontal"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="2dp"
+            android:background="#60000000" />
+    </info.kmichel.colordroid.VisorView>
+
+
+    <ImageButton
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:text=""
+        android:id="@+id/settingsButton"
+        android:layout_gravity="right|top"
+        android:contentDescription="@string/settings_button_label"
+        android:onClick="openSettings"
+        android:padding="16dp"
+        android:visibility="visible"
+        android:background="@android:color/transparent" />
+
+</FrameLayout>

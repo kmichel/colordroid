@@ -1,0 +1,30 @@
+# Code Quality
+    - TEST TEST TEST
+    - Add crash/error log aggregation
+# Performance
+    - Improve YCbCr->RGB conversion speed
+    - Move Camera off-thread
+    - Move ColorTable search off-thread
+    - Avoid memory allocation during color conversion
+    - Only run the accelerator sensor if needed
+# UI
+    - Fix tablet/landscape layout
+    - Fix TextureView filtering
+    - Make application icon
+    - Delay light/speech activation on application start
+    - Add buttons feedback on touch
+    - Animate Activity start
+    - Remove settings view
+    - Avoid rotation animation
+    - Localize color text and voice
+    - Improve accessibility: auto-enable color talk ? intro text ?
+# Color detection
+    - Detect white/grey/black
+    - Smooth color over time
+      - Except when moving ?
+    - Smooth color around visor only if not too different
+      - Display the selected area ?
+# Sound
+    - Translate color in sound using frequency/volume/tone
+    - Smoothly lower sound when moving device
+    - Alert user if sound is muted

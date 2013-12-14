@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="colordroid" parent="android:style/Theme.Black.NoTitleBar">
+        <!-- Black is better than the default grey because of the camera view -->
+    </style>
+</resources>

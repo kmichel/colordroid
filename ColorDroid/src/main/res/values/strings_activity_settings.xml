@@ -1,0 +1,20 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_header_camera_colors">Camera Colors</string>
+
+    <string name="pref_title_full_ycbrcr_range">Full Y\'CbCr range</string>
+
+    <string name="pref_title_ycbcr_encoding">Y\'CbCr encoding</string>
+    <string-array name="pref_ycbcr_encoding_titles">
+        <item>BT.601 625</item>
+        <item>BT.601 525</item>
+        <item>BT.709</item>
+    </string-array>
+    <string-array name="pref_ycbcr_encoding_values">
+        <item>BT_601_625</item>
+        <item>BT_601_525</item>
+        <item>BT_709</item>
+    </string-array>
+
+</resources>

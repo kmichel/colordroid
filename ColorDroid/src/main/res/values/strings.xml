@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ColorDroid</string>
+    <string name="ellipsis">…</string>
+    <string name="settings_button_label">Settings</string>
+    <string name="toggle_light_button_label">Toggle Light</string>
+    <string name="toggle_speech_button_label">Toggle Speech</string>
+</resources>
