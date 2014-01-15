@@ -8,7 +8,6 @@
     - Avoid memory allocation during color conversion
     - Only run the accelerator sensor if needed
 # UI
-    - Fix TextureView filtering
     - Make application icon
     - Delay light/speech activation on application start
     - Add buttons feedback on touch

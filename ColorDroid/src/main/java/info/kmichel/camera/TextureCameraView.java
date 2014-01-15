@@ -12,6 +12,9 @@ import android.view.ViewParent;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TextureCameraView extends TextureView implements TextureView.SurfaceTextureListener {
     private static final String TAG = "TextureCameraView";
+    // Having a scaleX or scaleY different from 1 avoids nearest-neighbor filtering,
+    // thus we scale the view with a random value and then compensate during layout.
+    private static final int TEXTURE_FILTERING_HACK_SCALE = 2;
 
     final CameraController camera_controller;
     private PreviewViewScaler scaler;
@@ -20,7 +23,8 @@ public class TextureCameraView extends TextureView implements TextureView.Surfac
         super(context);
         this.camera_controller = camera_controller;
         setSurfaceTextureListener(this);
-
+        setScaleX(TEXTURE_FILTERING_HACK_SCALE);
+        setScaleY(TEXTURE_FILTERING_HACK_SCALE);
     }
 
     @Override
@@ -52,9 +56,11 @@ public class TextureCameraView extends TextureView implements TextureView.Surfac
     protected void onMeasure(final int width_measure_spec, final int height_measure_spec) {
         if (scaler != null) {
             final int[] size = scaler.measure(width_measure_spec, height_measure_spec);
-            setMeasuredDimension(size[0], size[1]);
+            setMeasuredDimension(size[0] / TEXTURE_FILTERING_HACK_SCALE, size[1] / TEXTURE_FILTERING_HACK_SCALE);
         } else {
-            setMeasuredDimension(MeasureSpec.getSize(width_measure_spec), MeasureSpec.getSize(height_measure_spec));
+            setMeasuredDimension(
+                    MeasureSpec.getSize(width_measure_spec) / TEXTURE_FILTERING_HACK_SCALE,
+                    MeasureSpec.getSize(height_measure_spec) / TEXTURE_FILTERING_HACK_SCALE);
         }
     }
 
