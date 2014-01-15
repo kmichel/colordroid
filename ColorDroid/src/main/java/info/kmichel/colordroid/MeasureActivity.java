@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.Gravity;
 import android.view.Surface;
 import android.view.View;
@@ -39,6 +40,7 @@ public class MeasureActivity extends Activity implements
 
     private ColorDetector color_detector;
     private MovementDetector movement_detector;
+    private VolumeChecker volume_checker;
     private Speaker speaker;
     private Pacer pacer;
     private CameraController camera_controller;
@@ -66,6 +68,7 @@ public class MeasureActivity extends Activity implements
         color_detector = new ColorDetector();
         color_detector.loadMunsellData(this);
         movement_detector = new MovementDetector(this, 200, this);
+        volume_checker = new VolumeChecker(this, TextToSpeech.Engine.DEFAULT_STREAM);
         speaker = new Speaker(this, this);
         camera_controller = new CameraController(this);
         camera_controller.setDisplayOrientation(getRotationAngle(getWindowManager().getDefaultDisplay().getRotation()));
@@ -144,6 +147,8 @@ public class MeasureActivity extends Activity implements
         if (speech_button != null)
             speech_button.setChecked(enabled);
         speaker.setEnabled(enabled);
+        if (enabled)
+            volume_checker.check_volume();
     }
 
     @Override
@@ -209,19 +214,18 @@ public class MeasureActivity extends Activity implements
                     setBooleanPreference(key, checked);
                 }
             });
-        onSharedPreferenceChanged(preferences, key);
+        new HandlePreferenceEvent().execute(key, "init");
     }
 
-    private class HandlePreferenceChange extends AsyncTask<String, Void, Boolean> {
+    private class HandlePreferenceEvent extends AsyncTask<String, Void, Boolean> {
         private String key;
+        private String event;
 
         @Override
         protected Boolean doInBackground(final String... strings) {
-            if (strings.length != 0) {
-                key = strings[0];
-                return getPreferences(MODE_PRIVATE).getBoolean(key, false);
-            }
-            return false;
+            key = strings[0];
+            event = strings[1];
+            return getPreferences(MODE_PRIVATE).getBoolean(key, false);
         }
 
         @Override
@@ -230,14 +234,18 @@ public class MeasureActivity extends Activity implements
                 onLightEnabledChange(value);
             if ("enable_light_toggle".equals(key))
                 onLightToggleEnabledChange(value);
-            if ("enable_speech".equals(key))
-                onSpeechEnabledChange(value);
+            if ("enable_speech".equals(key)) {
+                if (event.equals("init") && value && volume_checker.is_muted())
+                    setBooleanPreference("enable_speech", false);
+                else
+                    onSpeechEnabledChange(value);
+            }
         }
     }
 
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-        new HandlePreferenceChange().execute(key);
+        new HandlePreferenceEvent().execute(key, "change");
     }
 
     private void setBooleanPreference(final String key, final boolean value) {

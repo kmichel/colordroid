@@ -27,4 +27,3 @@
 # Sound
     - Translate color in sound using frequency/volume/tone
     - Smoothly lower sound when moving device
-    - Alert user if sound is muted
