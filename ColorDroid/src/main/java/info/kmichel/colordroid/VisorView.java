@@ -34,7 +34,6 @@ public class VisorView extends ViewGroup {
             density = 1;
         setWillNotDraw(false);
         // TODO: test perfs with setLayerType
-
     }
 
     private static int negociateSize(final int measure_spec, final int suggested_minimum) {
@@ -85,35 +84,73 @@ public class VisorView extends ViewGroup {
 
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
+        final double view_margin = 16 * density;
         final double[] angles = {.375, .625, 0};
         final double[] x_anchors = {0.25, 0.75, 0.5};
         final double[] y_anchors = {0.25, 0.25, 1};
+        final double[] radial_align = {1.0, 1.0, 0.0};
         final boolean[] use_baseline = {false, false, true};
 
-        final double square_size = 32 * density;
-        final double anchor_circle_radius =
-                Math.sqrt(view_radius * view_radius + view_radius * view_radius)
-                        - Math.sqrt(square_size * square_size + square_size * square_size);
+        final int available_width = getMeasuredWidth();
+        final int available_height = getMeasuredHeight();
 
         final int children_count = getChildCount();
+        final double[] distances = new double[children_count];
+        final double[] x_slopes = new double[children_count];
+        final double[] y_slopes = new double[children_count];
+        final double[] x_offsets = new double[children_count];
+        final double[] y_offsets = new double[children_count];
+        double min_distance = Math.min(available_width, available_height) * 0.5;
+
         for (int i = 0; i < children_count; ++i) {
             final View child = getChildAt(i);
-            if (child == null)
+            if (child == null || child.getVisibility() == GONE)
                 continue;
-            if (child.getVisibility() == GONE)
-                continue;
-            final double angle_radian = 2 * Math.PI * (angles[i] - 0.25);
-            final double x_base = left + circle_center_x + Math.cos(angle_radian) * anchor_circle_radius;
-            final double y_base = top + circle_center_y + Math.sin(angle_radian) * anchor_circle_radius;
 
             final int child_width = child.getMeasuredWidth();
             final int child_height = child.getMeasuredHeight();
-            final int virtual_child_height = (use_baseline[i] && child.getBaseline() != -1) ? child.getBaseline() : child_height;
-            final int child_left = (int) Math.round(x_base - child_width * x_anchors[i]);
-            final int child_top = (int) Math.round(y_base - virtual_child_height * y_anchors[i]);
+            final int anchoring_child_height = use_baseline[i] && child.getBaseline() != -1 ? child.getBaseline() : child_height;
 
-            child.layout(child_left, child_top, child_left + child_width, child_top + child_height);
+            final double child_left_extra = child_width * x_anchors[i];
+            final double child_top_extra = anchoring_child_height * y_anchors[i];
+            final double child_right_extra = child_width - child_left_extra;
+            final double child_bottom_extra = child_height - child_top_extra;
+
+            final double min_left = child_left_extra - circle_center_x;
+            final double min_top = child_top_extra - circle_center_y;
+            final double max_right = circle_center_x - child_right_extra;
+            final double max_bottom = circle_center_y - child_bottom_extra;
+
+            final double angle_radian = 2 * Math.PI * (angles[i] - 0.25);
+            final double x_slope = Math.cos(angle_radian);
+            final double y_slope = Math.sin(angle_radian);
+
+            final double max_x_distance = (x_slope >= 0 ? max_right : min_left) / x_slope;
+            final double max_y_distance = (y_slope >= 0 ? max_bottom : min_top) / y_slope;
+
+            final double max_distance = Math.min(max_x_distance, max_y_distance);
+            min_distance = Math.min(min_distance, max_distance);
+
+            distances[i] = max_distance;
+            x_slopes[i] = x_slope;
+            y_slopes[i] = y_slope;
+            x_offsets[i] = child_left_extra;
+            y_offsets[i] = child_top_extra;
         }
+
+        for (int i = 0; i < children_count; ++i) {
+            final View child = getChildAt(i);
+            if (child == null || child.getVisibility() == GONE)
+                continue;
+
+            final double distance = min_distance + (distances[i] - min_distance) * radial_align[i];
+            final int child_left = (int) Math.round(circle_center_x + distance * x_slopes[i] - x_offsets[i]);
+            final int child_top = (int) Math.round(circle_center_y + distance * y_slopes[i] - y_offsets[i]);
+            child.layout(child_left, child_top, child_left + child.getMeasuredWidth(), child_top + child.getMeasuredHeight());
+        }
+
+        view_radius = (float) (min_distance - view_margin);
+        visor_radius = view_radius * 0.2f;
     }
 
     @Override
@@ -122,8 +159,6 @@ public class VisorView extends ViewGroup {
         final int minSide = Math.min(width, height);
         circle_center_x = width * 0.5f;
         circle_center_y = height * 0.5f;
-        visor_radius = minSide * 0.1f;
-        view_radius = minSide * 0.5f - 16.0f * density;
 
         gradient = new RadialGradient(circle_center_x, circle_center_y, minSide,
                 new int[]{Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK}, null, Shader.TileMode.CLAMP);
