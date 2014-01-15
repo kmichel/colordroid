@@ -46,7 +46,10 @@
             android:paddingRight="18dp"
             android:paddingBottom="4dp"
             android:paddingTop="2dp"
-            android:background="#60000000" />
+            android:shadowColor="#50000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5" />
     </info.kmichel.colordroid.VisorView>
 
 
