@@ -10,7 +10,6 @@
 # UI
     - Make application icon
     - Delay light/speech activation on application start
-    - Add buttons feedback on touch
     - Animate Activity start
     - Remove settings view
     - Avoid rotation animation

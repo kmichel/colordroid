@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MeasureActivity"
-    android:clipChildren="false">
+    tools:context=".MeasureActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -11,6 +10,11 @@
         android:id="@+id/cameraPreview"
         android:layout_gravity="center"
         android:clipChildren="true" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/highlightsLayout"></RelativeLayout>
 
     <info.kmichel.colordroid.VisorView
         android:layout_width="match_parent"

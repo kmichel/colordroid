@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.Window;
 import android.widget.Checkable;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ public class MeasureActivity extends Activity implements
     private Speaker speaker;
     private Pacer pacer;
     private CameraController camera_controller;
+    private ButtonHighlighter button_highlighter;
 
     private static int getRotationAngle(final int rotation_code) {
         switch (rotation_code) {
@@ -93,8 +96,9 @@ public class MeasureActivity extends Activity implements
 
         final SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         onSharedPreferenceChanged(preferences, "enable_light_toggle");
-        bindToggleToPreference((CompoundButton) findViewById(R.id.speechButton), preferences, "enable_speech");
-        bindToggleToPreference((CompoundButton) findViewById(R.id.lightButton), preferences, "enable_light");
+        button_highlighter = new ButtonHighlighter(this, (RelativeLayout) findViewById(R.id.highlightsLayout), R.anim.button_highlight);
+        setupButton((CompoundButton) findViewById(R.id.speechButton), "enable_speech", R.drawable.speech_toggle_highlight);
+        setupButton((CompoundButton) findViewById(R.id.lightButton), "enable_light", R.drawable.light_toggle_highlight);
         preferences.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -206,14 +210,22 @@ public class MeasureActivity extends Activity implements
             startActivity(new Intent(this, DeprecatedSettingsActivity.class));
     }
 
-    private void bindToggleToPreference(final CompoundButton button, final SharedPreferences preferences, final String key) {
-        if (button != null)
+    private void setupButton(final CompoundButton button, final String key, final int highlight_drawable_id) {
+        if (button != null) {
+            final Drawable highlight_drawable = getResources().getDrawable(highlight_drawable_id);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    button_highlighter.highlightButton(button, highlight_drawable);
+                }
+            });
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(final CompoundButton checked_button, final boolean checked) {
                     setBooleanPreference(key, checked);
                 }
             });
+        }
         new HandlePreferenceEvent().execute(key, "init");
     }
 

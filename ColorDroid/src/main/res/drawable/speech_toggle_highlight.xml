@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_speech_on_highlight" android:state_enabled="true" />
+    <item android:drawable="@drawable/ic_speech_off_highlight" android:state_enabled="false" />
+</selector>
