@@ -77,7 +77,7 @@ public class TextureCameraView extends TextureView implements TextureView.Surfac
     @Override
     public boolean onSurfaceTextureDestroyed(final SurfaceTexture surface_texture) {
         camera_controller.setPreviewTexture(null);
-        return false;
+        return true;
     }
 
     @Override
