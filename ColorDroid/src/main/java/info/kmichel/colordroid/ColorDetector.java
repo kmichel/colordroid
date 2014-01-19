@@ -100,12 +100,10 @@ public class ColorDetector {
     }
 
     public String detect_color(final float L, final float u, final float v) {
-        final NamedLuvColor named_color = color_table.getNearestColor(L, u, v);
-
+        final NamedColor named_color = color_table.getNearestColor(L, u, v);
         if (named_color == null)
             return "";
-
-        return named_color.name;
+        return named_color.short_name;
     }
 
 }
