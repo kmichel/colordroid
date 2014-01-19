@@ -51,7 +51,6 @@ public class MeasureActivity extends Activity implements
     private Pacer pacer;
     private CameraController camera_controller;
     private ButtonHighlighter button_highlighter;
-    private View camera_view;
 
     private static int getRotationAngle(final int rotation_code) {
         switch (rotation_code) {
@@ -72,6 +71,9 @@ public class MeasureActivity extends Activity implements
         super.onCreate(savedInstanceState);
         new StrictModeHelper(this).setSeverity(StrictModeSeverity.KILL_ON_VIOLATE);
         setContentView(R.layout.activity_measure);
+        final Window window = getWindow();
+        if (window != null)
+            window.setBackgroundDrawable(null);
 
         color_detector = new ColorDetector();
         color_detector.loadMunsellData(this);
@@ -89,11 +91,11 @@ public class MeasureActivity extends Activity implements
             }
         });
 
+        final View camera_view;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             camera_view = new TextureCameraView(this, camera_controller);
         else
             camera_view = new SurfaceCameraView(this, camera_controller);
-
         final ViewGroup camera_preview = (ViewGroup) findViewById(R.id.cameraPreview);
         final FrameLayout.LayoutParams layout_params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -275,38 +277,17 @@ public class MeasureActivity extends Activity implements
     }
 
     private void hideCameraView() {
-        final Window window = getWindow();
-        if (window != null)
-            window.setBackgroundDrawableResource(android.R.color.black);
-        final Animation hide_animation = new AlphaAnimation(0, 0);
+        final Animation hide_animation = new AlphaAnimation(1, 1);
         hide_animation.setDuration(0);
         hide_animation.setFillAfter(true);
-        camera_view.startAnimation(hide_animation);
+        findViewById(R.id.cameraObscurer).startAnimation(hide_animation);
     }
 
     private void showCameraView() {
-        final Animation fade_in = new AlphaAnimation(0, 1);
-        fade_in.setDuration(1000);
-        fade_in.setFillAfter(true);
-        fade_in.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(final Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(final Animation animation) {
-                final Window window = getWindow();
-                if (window != null)
-                    window.setBackgroundDrawable(null);
-            }
-
-            @Override
-            public void onAnimationRepeat(final Animation animation) {
-
-            }
-        });
-        camera_view.startAnimation(fade_in);
+        final Animation show_animation = new AlphaAnimation(1, 0);
+        show_animation.setDuration(1000);
+        show_animation.setFillAfter(true);
+        findViewById(R.id.cameraObscurer).startAnimation(show_animation);
     }
 
 }

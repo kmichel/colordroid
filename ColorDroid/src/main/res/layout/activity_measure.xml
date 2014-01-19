@@ -11,10 +11,16 @@
         android:layout_gravity="center"
         android:clipChildren="true" />
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/cameraObscurer"
+        android:background="#000000" />
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/highlightsLayout"></RelativeLayout>
+        android:id="@+id/highlightsLayout" />
 
     <info.kmichel.colordroid.VisorView
         android:layout_width="match_parent"
