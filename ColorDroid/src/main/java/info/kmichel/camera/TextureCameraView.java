@@ -71,7 +71,6 @@ public class TextureCameraView extends TextureView implements TextureView.Surfac
 
     @Override
     public void onSurfaceTextureSizeChanged(final SurfaceTexture surface_texture, final int width, final int height) {
-        camera_controller.setPreviewTexture(surface_texture);
     }
 
     @Override
