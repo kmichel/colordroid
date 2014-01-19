@@ -1,7 +1,7 @@
 package info.kmichel.camera;
 
 public interface CameraListener {
-    void onCameraStart();
+    void onCameraStart(boolean light_supported);
 
     void onCameraStartRunning();
 

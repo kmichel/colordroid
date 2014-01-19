@@ -3,7 +3,6 @@
     - Add crash/error log aggregation
 # Performance
     - Improve YCbCr->RGB conversion speed
-    - Move Camera off-thread
     - Move ColorTable search off-thread
     - Avoid memory allocation during color conversion
     - Only run the accelerator sensor if needed

@@ -30,8 +30,10 @@ import info.kmichel.Speaker;
 import info.kmichel.SpeakerListener;
 import info.kmichel.StrictModeHelper;
 import info.kmichel.StrictModeSeverity;
+import info.kmichel.camera.AsyncCameraController;
 import info.kmichel.camera.CameraController;
 import info.kmichel.camera.CameraListener;
+import info.kmichel.camera.CameraState;
 import info.kmichel.camera.NV21Buffer;
 import info.kmichel.camera.SurfaceCameraView;
 import info.kmichel.camera.TextureCameraView;
@@ -76,7 +78,7 @@ public class MeasureActivity extends Activity implements
         movement_detector = new MovementDetector(this, 200, this);
         volume_checker = new VolumeChecker(this, TextToSpeech.Engine.DEFAULT_STREAM);
         speaker = new Speaker(this, this);
-        camera_controller = new CameraController(this);
+        camera_controller = new AsyncCameraController(this);
         camera_controller.setDisplayOrientation(getRotationAngle(getWindowManager().getDefaultDisplay().getRotation()));
 
         final TextView text_view = (TextView) findViewById(R.id.colorName);
@@ -120,7 +122,7 @@ public class MeasureActivity extends Activity implements
             movement_detector.start();
         // We wait for first camera image before showing it
         hideCameraView();
-        camera_controller.setExpectedState(CameraController.CameraState.CAMERA_RUNNING);
+        camera_controller.setExpectedState(CameraState.CAMERA_RUNNING);
     }
 
     @Override
@@ -130,7 +132,7 @@ public class MeasureActivity extends Activity implements
             movement_detector.stop();
         if (pacer != null)
             pacer.cancelPendingText();
-        camera_controller.setExpectedState(CameraController.CameraState.CAMERA_STOPPED);
+        camera_controller.setExpectedState(CameraState.CAMERA_STOPPED);
     }
 
     @Override
@@ -163,8 +165,7 @@ public class MeasureActivity extends Activity implements
     }
 
     @Override
-    public void onCameraStart() {
-        final boolean light_supported = camera_controller.isLightSupported();
+    public void onCameraStart(final boolean light_supported) {
         final View light_button = findViewById(R.id.lightButton);
         if (light_button != null)
             light_button.setEnabled(light_supported);
