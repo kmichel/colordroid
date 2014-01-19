@@ -43,4 +43,32 @@ public class MunsellColor {
     public String toString() {
         return String.format("%s %d %d", hue, value, chroma);
     }
+
+    public int getSegment() {
+        final int segment_in_band = (int) Math.floor(hue.value / 2.5f);
+        switch (hue.band) {
+            case R:
+                return segment_in_band;
+            case YR:
+                return 5 + segment_in_band;
+            case Y:
+                return 10 + segment_in_band;
+            case GY:
+                return 15 + segment_in_band;
+            case G:
+                return 20 + segment_in_band;
+            case BG:
+                return 25 + segment_in_band;
+            case B:
+                return 30 + segment_in_band;
+            case PB:
+                return 35 + segment_in_band;
+            case P:
+                return 40 + segment_in_band;
+            case RP:
+                return 45 + segment_in_band;
+            default:
+                throw new IllegalStateException("Invalid Hue Band");
+        }
+    }
 }

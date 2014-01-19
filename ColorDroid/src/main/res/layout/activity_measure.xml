@@ -24,7 +24,8 @@
 
     <info.kmichel.colordroid.VisorView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/visorView">
 
         <ToggleButton
             android:layout_width="64dp"

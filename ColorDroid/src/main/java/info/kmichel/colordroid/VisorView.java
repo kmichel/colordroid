@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RadialGradient;
+import android.graphics.RectF;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,6 +21,7 @@ public class VisorView extends ViewGroup {
     private float circle_center_y;
     private final float density;
     private RadialGradient gradient;
+    private Integer highlighted_segment;
 
     public VisorView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -34,6 +36,10 @@ public class VisorView extends ViewGroup {
             density = 1;
         setWillNotDraw(false);
         // TODO: test perfs with setLayerType
+    }
+
+    public void setHighlightedSegment(final Integer highlighted_segment) {
+        this.highlighted_segment = highlighted_segment;
     }
 
     private static int negociateSize(final int measure_spec, final int suggested_minimum) {
@@ -181,9 +187,29 @@ public class VisorView extends ViewGroup {
         paint.setStrokeWidth(1 * density);
         canvas.drawCircle(circle_center_x, circle_center_y, view_radius - 0.5f * density, paint);
 
-        paint.setARGB(64, 255, 255, 255);
-        paint.setStrokeWidth(6 * density);
-        canvas.drawCircle(circle_center_x, circle_center_y, view_radius - 6 * density, paint);
+        final int segments_width = 10;
+        final float segments_radius = view_radius - segments_width * density * 0.5f - 3 * density;
+        paint.setStrokeWidth(segments_width * density);
+
+        final RectF segments_rect = new RectF(
+                circle_center_x - segments_radius, circle_center_y - segments_radius,
+                circle_center_x + segments_radius, circle_center_y + segments_radius);
+        final int main_segments_count = 10;
+        final int segments_separation = 1;
+        final float main_segments_angle = 360.f / main_segments_count;
+        paint.setARGB(32, 255, 255, 255);
+        for (int i = 0; i < main_segments_count; ++i)
+            canvas.drawArc(segments_rect, i * main_segments_angle - segments_separation * 0.5f, main_segments_angle - segments_separation, false, paint);
+
+        final int sub_segments_count = main_segments_count * 5;
+        final float sub_segments_angle = 360.f / sub_segments_count;
+        paint.setARGB(32, 255, 255, 255);
+        for (int i = 0; i < sub_segments_count; ++i)
+            canvas.drawArc(segments_rect, i * sub_segments_angle - segments_separation * 0.5f, sub_segments_angle - segments_separation, false, paint);
+        if (highlighted_segment != null) {
+            paint.setARGB(192, 255, 255, 255);
+            canvas.drawArc(segments_rect, highlighted_segment * sub_segments_angle - segments_separation * 0.5f, sub_segments_angle - segments_separation, false, paint);
+        }
 
         paint.setStyle(Paint.Style.FILL);
         paint.setARGB(48, 255, 255, 255);
@@ -194,7 +220,5 @@ public class VisorView extends ViewGroup {
 
         paint.setARGB(255, 255, 255, 255);
         canvas.drawCircle(circle_center_x, circle_center_y, 1.0f * density, paint);
-
-
     }
 }

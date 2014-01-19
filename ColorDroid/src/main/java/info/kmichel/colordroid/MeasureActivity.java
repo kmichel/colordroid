@@ -189,7 +189,15 @@ public class MeasureActivity extends Activity implements
 
     @Override
     public void onImageChange(final NV21Buffer image) {
-        pacer.setText(color_detector.detect_color(image));
+        final VisorView visor_view = ((VisorView) findViewById(R.id.visorView));
+        final NamedColor detected_color = color_detector.detect_color(image);
+        if (detected_color != null) {
+            visor_view.setHighlightedSegment(detected_color.munsell_color.getSegment());
+            pacer.setText(detected_color.short_name);
+        } else {
+            visor_view.setHighlightedSegment(null);
+            pacer.setText("");
+        }
     }
 
     @Override

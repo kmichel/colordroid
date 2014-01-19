@@ -53,7 +53,7 @@ public class ColorDetector {
         }).start();
     }
 
-    public String detect_color(final NV21Buffer image) {
+    public NamedColor detect_color(final NV21Buffer image) {
         // XXX: the nv21 buffer could be smaller than the ycbcrbuffer
         final int left = (image.width - ycbcr_buffer_width) / 4 * 2;
         final int right = left + ycbcr_buffer_width;
@@ -63,7 +63,7 @@ public class ColorDetector {
         return detect_color(ycbcr_buffer, ycbcr_buffer_width, ycbcr_buffer_height);
     }
 
-    public String detect_color(final int[] ycbcr_buffer, final int buffer_width, final int buffer_height) {
+    public NamedColor detect_color(final int[] ycbcr_buffer, final int buffer_width, final int buffer_height) {
         final int x_center = buffer_width / 2;
         final int y_center = buffer_height / 2;
 
@@ -99,11 +99,8 @@ public class ColorDetector {
         return detect_color(L, u, v);
     }
 
-    public String detect_color(final float L, final float u, final float v) {
-        final NamedColor named_color = color_table.getNearestColor(L, u, v);
-        if (named_color == null)
-            return "";
-        return named_color.short_name;
+    public NamedColor detect_color(final float L, final float u, final float v) {
+        return color_table.getNearestColor(L, u, v);
     }
 
 }
